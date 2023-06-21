@@ -21,9 +21,16 @@ def start_cmd(message):
 BOT_TOKEN = os.environ.get('5919221259:AAGSAveZ-DAdNSL0jtwqOlVnG445hCQvia8')
 bot = TeleBot('5919221259:AAGSAveZ-DAdNSL0jtwqOlVnG445hCQvia8')
 
-@bot.message_handler(commands=['start', 'hello'])
+@bot.message_handler(commands=['найтиработу'])
 def send_welcome(message):
     bot.reply_to(message, "Привет, чем могу помочь?\n Вот возможные команды: /start, /расходы, /советыэкономии, /советыпоинвестициям, /инвестиции [зарплата], /найтиработу, /акции")
+    markup = types.InlineKeyboardMarkup()
+    button1 = types.InlineKeyboardButton("Сайт hh.ru", url='https://kazan.hh.ru/')
+    markup.add(button1)
+    button1 = types.InlineKeyboardButton("Сайт Авито", url='https://www.avito.ru/kazan/rabota')
+    markup.add(button1)
+    bot.send_message(message.chat.id, "{0.first_name}, Нажми на кнопку и перейди на сайт)".format(message.from_user), reply_markup=markup)
+bot.polling(none_stop=True)\
 
 @bot.message_handler(commands=['советыэкономии'])
 def send_advise(message):
@@ -72,10 +79,6 @@ def invest(message):
 
     # Отправляем ответ пользователю
     bot.reply_to(message, f"По данной зарплате инвестируйте {invest} рублей в месяц")
-
-@bot.message_handler(commands=['найтиработу']) #обрабатываем команду /link
-def send_link(message):
-    bot.send_message(message.chat.id, "Варианты сайтов для поиска работы в интернете: https://kazan.hh.ru/ , https://www.avito.ru/kazan/rabota")
 
 @bot.message_handler(commands=['акции'])
 def send_message(message):
