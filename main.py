@@ -6,13 +6,34 @@ from telebot import TeleBot
 import telebot
 from telebot import types
 
-
 BOT_TOKEN = os.environ.get('5919221259:AAGSAveZ-DAdNSL0jtwqOlVnG445hCQvia8')
 bot = TeleBot('5919221259:AAGSAveZ-DAdNSL0jtwqOlVnG445hCQvia8')
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
-    bot.reply_to(message, "Привет, чем могу помочь?\n Вот возможные команды: \n /start - старт,\n /expenses - посчитает все Ваши расходы,\n /economyadvice - даст советы экономии,\n /investmenttips - даст советы по инвестициям,\n /findajob - поможет найти работу,\n /инвестиции [зарплата] - расчитает сумму инвестиции от заработной платы,\n /stocks - акции, \n /text - расчитает Ваш баланс на данный момент")
+    bot.reply_to(message, "Привет, чем могу помочь?\n Вот возможные команды: \n /start - старт,\n /expenses - посчитает все Ваши расходы,\n /economyadvice - даст советы экономии,\n /investmenttips - даст советы по инвестициям,\n /findajob - поможет найти работу,\n /инвестиции [зарплата] - расчитает сумму инвестиции от заработной платы,\n /stocks - акции, которые вы можете приобрести \n /text - расчитает Ваш баланс на данный момент")
+
+@bot.message_handler(content_types=['text'])
+def handle_text(message):
+    try:
+        # Получение дохода из сообщения пользователя
+        income = float(message.text)
+        # Отправка пользователю сообщения для ввода расходов
+        msg = bot.send_message(message.chat.id, "Напишите сумму ваших расходов")
+        bot.register_next_step_handler(msg, subtract_expenses, income)
+    except ValueError:
+        bot.reply_to(message, "Напишите сумму ваших доходов")
+# Функция для вычитания расходов из доходов
+def subtract_expenses(message, income):
+    try:
+        # Получение расхода из сообщения пользователя
+        expenses = float(message.text)
+        # Вычисление баланса
+        balance = income - expenses
+        # Отправка пользователю сообщения с балансом
+        bot.reply_to(message, f"Ваш текущий баланс: {balance:.2f}")
+    except ValueError:
+        bot.reply_to(message, "Извините, я не понимаю. Пожалуйста, отправьте число.")
 
 @bot.message_handler(commands=['economyadvice'])
 def send_advise(message):
@@ -39,36 +60,6 @@ def add_expenses(message):
     except:
         bot.send_message(message.chat.id, "Ошибка. Введите корректную сумму расходов.")
 # обрабатываем запрос на текущую сумму расходов
-@bot.message_handler(commands=['text'])
-def send_welcome(message):
-    bot.reply_to(message, "Привет! Я помогу тебе вычесть расходы из доходов. Введи свой доход:")
-
-# Обработка дохода
-# Обработчик текстовых сообщений
-@bot.message_handler(content_types=['text'])
-def handle_text(message):
-    try:
-        # Получение дохода из сообщения пользователя
-        income = float(message.text)
-
-        # Отправка пользователю сообщения для ввода расходов
-        msg = bot.send_message(message.chat.id, "Сколько ты потратил сегодня?")
-        bot.register_next_step_handler(msg, subtract_expenses, income)
-    except ValueError:
-        bot.reply_to(message, "Извините, я не понимаю. Пожалуйста, отправьте число.")
-
-# Обработка расходов
-# Функция для вычитания расходов из доходов
-def subtract_expenses(message, income):
-    try:
-        # Получение расхода из сообщения пользователя
-        expenses = float(message.text)
-        # Вычисление баланса
-        balance = income - expenses
-        # Отправка пользователю сообщения с балансом
-        bot.reply_to(message, f"Ваш текущий баланс: {balance:.2f}")
-    except ValueError:
-        bot.reply_to(message, "Извините, я не понимаю. Пожалуйста, отправьте число.")
 
 @bot.message_handler(func=lambda message: message.text.lower() == "сумма")
 def show_expenses(message):
@@ -88,6 +79,8 @@ def invest(message):
     # Отправляем ответ пользователю
     bot.reply_to(message, f"По данной зарплате инвестируйте {invest} рублей в месяц")
 
+
+
 @bot.message_handler(commands=['findajob'])
 def send_welcome(message):
     markup = types.InlineKeyboardMarkup()
@@ -105,7 +98,6 @@ def send_we(message):
     markup.add(button)
     bot.send_message(message.chat.id, "{0.first_name}, Нажми на кнопку и перейди на сайт)".format(message.from_user), reply_markup=markup)
 bot.polling(none_stop=True)\
-
 
 
 
