@@ -11,7 +11,7 @@ bot = TeleBot('5919221259:AAGSAveZ-DAdNSL0jtwqOlVnG445hCQvia8')
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
-    bot.reply_to(message, "Привет, чем могу помочь?\n Вот возможные команды: /start - старт, /expenses - расходы, /economyadvice - советы экономии, /investmenttips - советы по инвестициям, /findajob - найти работу, /инвестиции [зарплата] - инвестиции, /stocks - акции")
+    bot.reply_to(message, "Привет, чем могу помочь?\n Вот возможные команды: \n /start - старт,\n /expenses - расходы,\n /economyadvice - советы экономии,\n /investmenttips - советы по инвестициям,\n /findajob - найти работу,\n /инвестиции [зарплата] - инвестиции,\n /stocks - акции")
 
 @bot.message_handler(commands=['economyadvice'])
 def send_advise(message):
